@@ -90,7 +90,7 @@ export default function App() {
           {stage === "email" ? (
             <form onSubmit={requestCode}>
               <label className="field-label" htmlFor="owner-email">Email address</label>
-              <input id="owner-email" className="auth-input" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
+              <input id="owner-email" className="auth-input" type="text" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required value={email} onChange={e => setEmail(e.target.value.trim())} placeholder="you@example.com" />
               <button className="connect-button auth-submit" disabled={busy || !email.trim()} type="submit">{busy ? "Sending…" : "Continue"}</button>
             </form>
           ) : (
