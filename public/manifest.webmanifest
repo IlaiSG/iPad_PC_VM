@@ -1,7 +1,7 @@
 {
-  "name": "Evergreen Connect",
-  "short_name": "Evergreen",
-  "description": "A private connection to your Evergreen Windows computer.",
+  "name": "VMConnect",
+  "short_name": "VMConnect",
+  "description": "Connect to your Windows virtual machine from wherever you are.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#101510",
