@@ -82,6 +82,31 @@ export function setSessionCookie(res: any, token: string): void {
   res.setHeader("Set-Cookie", `vmc_session=${encodeURIComponent(token)}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=43200`);
 }
 
+export function newDeviceId(): string {
+  return randomBytes(24).toString("base64url");
+}
+
+export function createDeviceToken(deviceId: string): string {
+  const signature = createHmac("sha256", requiredEnv("SESSION_SECRET")).update(`device:${deviceId}`).digest("base64url");
+  return `${deviceId}.${signature}`;
+}
+
+export function readTrustedDeviceId(req: any): string | undefined {
+  const token = readCookie(req, "vmc_device");
+  if (!token) return undefined;
+  const [deviceId, signature, extra] = token.split(".");
+  if (!deviceId || !signature || extra) return undefined;
+  const expected = createHmac("sha256", requiredEnv("SESSION_SECRET")).update(`device:${deviceId}`).digest("base64url");
+  return safeEqual(signature, expected) ? deviceId : undefined;
+}
+
+export function setDeviceCookie(res: any, deviceId: string): void {
+  res.setHeader("Set-Cookie", [
+    `vmc_session=${encodeURIComponent(createSession(ownerEmail()))}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=43200`,
+    `vmc_device=${encodeURIComponent(createDeviceToken(deviceId))}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=31536000`,
+  ]);
+}
+
 export function clearSessionCookie(res: any): void {
   res.setHeader("Set-Cookie", "vmc_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0");
 }
