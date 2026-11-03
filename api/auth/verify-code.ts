@@ -28,8 +28,9 @@ export default async function handler(req: any, res: any) {
         p_now: new Date().toISOString(),
       });
     }
+    const existingPasskeys = await dbRpc<any[]>("vmconnect_list_passkeys", { p_device_id: deviceId });
     setDeviceCookie(res, deviceId!);
-    return sendJson(res, 200, { ok: true, trustedDevice: true });
+    return sendJson(res, 200, { ok: true, trustedDevice: true, hasPasskey: Boolean(existingPasskeys?.length) });
   } catch (error) {
     console.error("verify-code failed", error instanceof Error ? error.message : "unknown");
     return sendJson(res, 503, { error: "Sign-in is temporarily unavailable." });
