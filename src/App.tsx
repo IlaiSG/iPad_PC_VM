@@ -29,7 +29,7 @@ export default function App() {
   async function requestCode(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const cleanEmail = email.trim().toLowerCase();
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(cleanEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
       setError("Please enter a valid email address.");
       return;
     }
