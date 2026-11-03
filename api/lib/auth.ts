@@ -40,7 +40,6 @@ export async function dbRpc<T>(name: string, body: Record<string, unknown>): Pro
     headers: {
       "content-type": "application/json",
       apikey: key,
-      authorization: `Bearer ${key}`,
     },
     body: JSON.stringify(body),
   });
