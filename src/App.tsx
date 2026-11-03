@@ -4,9 +4,9 @@ export default function App() {
   return (
     <main className="shell">
       <header className="topbar">
-        <a className="brand" href="/" aria-label="Evergreen Connect home">
+        <a className="brand" href="/" aria-label="VMConnect home">
           <span className="brand-mark"><span /><span /><span /><span /></span>
-          <span>evergreen<span className="brand-light"> connect</span></span>
+          <span>VMConnect</span>
         </a>
         <button className="icon-button" aria-label="Help" title="Setup help">
           <CircleHelp size={19} />
@@ -14,9 +14,9 @@ export default function App() {
       </header>
 
       <section className="welcome">
-        <p className="eyebrow">YOUR PRIVATE WORKSPACE</p>
-        <h1>Your computer,<br /><em>wherever you are.</em></h1>
-        <p className="intro">Connect to your Windows virtual computer, hosted securely on your own PC.</p>
+        <p className="eyebrow">YOUR PRIVATE PC</p>
+        <h1>Your PC,<br /><em>wherever you are.</em></h1>
+        <p className="intro">Connect to your Windows virtual machine, hosted securely on your own computer.</p>
       </section>
 
       <section className="computer-card" aria-labelledby="computer-title">
@@ -25,8 +25,8 @@ export default function App() {
           <span className="status"><span className="status-dot" />Setup required</span>
         </div>
         <div className="computer-info">
-          <h2 id="computer-title">Evergreen Windows</h2>
-          <p>Windows virtual machine · Your PC</p>
+          <h2 id="computer-title">Windows PC</h2>
+          <p>Windows virtual machine · Your computer</p>
         </div>
         <button className="connect-button" disabled>
           <Power size={17} /> Connect
@@ -50,8 +50,8 @@ export default function App() {
       </section>
 
       <footer>
-        <span>Evergreen Connect <span className="version">0.1.0 · Preview</span></span>
-        <span className="footer-mark">Built for your own devices</span>
+        <span>VMConnect <span className="version">0.1.0 · Preview</span></span>
+        <span className="footer-mark">Your PC, wherever you are.</span>
       </footer>
     </main>
   );
