@@ -5,8 +5,12 @@ export default async function handler(req: any, res: any) {
   try {
     if (!checkOrigin(req)) return sendJson(res, 403, { error: "Request origin not allowed" });
     const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
-    if (!validEmail(email) || email !== ownerEmail()) {
-      return sendJson(res, 200, { ok: true, message: "If the address is authorised, a code will be sent." });
+    if (!validEmail(email)) {
+      return sendJson(res, 400, { error: "Please enter a valid email address." });
+    }
+    if (email !== ownerEmail()) {
+      // Reject unauthorised addresses before issuing a code or contacting Resend.
+      return sendJson(res, 403, { error: "This email address is not authorised to access VMConnect." });
     }
 
     const code = newCode();
