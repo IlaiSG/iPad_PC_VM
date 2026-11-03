@@ -1,4 +1,4 @@
-import { checkOrigin, dbRpc, hashCode, newCode, ownerEmail, sendJson, validEmail } from "../lib/auth";
+import { checkOrigin, dbRpc, hashCode, newCode, ownerEmail, requiredEnv, sendJson, validEmail } from "../lib/auth";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Method not allowed" });
@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        authorization: `Bearer ${requiredEnv("RESEND_API_KEY")}`,
         "content-type": "application/json",
       },
       body: JSON.stringify({
