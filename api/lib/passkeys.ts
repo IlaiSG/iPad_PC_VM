@@ -18,8 +18,8 @@ export function rpConfig() {
   return { origin, rpID: new URL(origin).hostname, rpName: "VMConnect" };
 }
 
-export async function requireTrustedDevice(req: any, res: any): Promise<string | null> {
-  if (!verifySession(req.cookies?.vmc_session ?? readCookieFallback(req, "vmc_session"))) {
+export async function requireTrustedDevice(req: any, res: any, requireSession = true): Promise<string | null> {
+  if (requireSession && !verifySession(req.cookies?.vmc_session ?? readCookieFallback(req, "vmc_session"))) {
     sendJson(res, 401, { error: "Please verify your email address first." });
     return null;
   }
