@@ -1,11 +1,11 @@
-import { CircleHelp, Monitor, Power, RefreshCw, ShieldCheck, Wifi } from "lucide-react";
+import { CircleHelp, Monitor, MousePointer2, Power, RefreshCw, ShieldCheck, Wifi } from "lucide-react";
 
 export default function App() {
   return (
     <main className="shell">
       <header className="topbar">
         <a className="brand" href="/" aria-label="VMConnect home">
-          <span className="brand-mark"><span /><span /><span /><span /></span>
+          <MousePointer2 className="brand-mark" size={25} strokeWidth={1.9} />
           <span>VMConnect</span>
         </a>
         <button className="icon-button" aria-label="Help" title="Setup help">
