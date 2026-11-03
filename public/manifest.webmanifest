@@ -1,0 +1,12 @@
+{
+  "name": "Evergreen Connect",
+  "short_name": "Evergreen",
+  "description": "A private connection to your Evergreen Windows computer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#101510",
+  "theme_color": "#101510",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
