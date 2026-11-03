@@ -1,4 +1,4 @@
-const CACHE = "evergreen-connect-v1";
+const CACHE = "vmconnect-v2";
 const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)));
