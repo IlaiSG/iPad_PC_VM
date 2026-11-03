@@ -1,4 +1,4 @@
-import { checkOrigin, createSession, dbRpc, hashCode, ownerEmail, sendJson, setSessionCookie, validEmail } from "../lib/auth.js";
+import { checkOrigin, dbRpc, hashCode, newDeviceId, ownerEmail, readTrustedDeviceId, sendJson, setDeviceCookie, validEmail } from "../lib/auth.js";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Method not allowed" });
@@ -16,8 +16,20 @@ export default async function handler(req: any, res: any) {
     });
     if (!accepted) return sendJson(res, 400, { error: "The code is invalid or has expired." });
 
-    setSessionCookie(res, createSession(email));
-    return sendJson(res, 200, { ok: true });
+    let deviceId = readTrustedDeviceId(req);
+    let trusted = deviceId ? await dbRpc<boolean>("vmconnect_device_is_trusted", {
+      p_device_id: deviceId,
+      p_now: new Date().toISOString(),
+    }) : false;
+    if (!trusted) {
+      deviceId = newDeviceId();
+      await dbRpc<boolean>("vmconnect_trust_device", {
+        p_device_id: deviceId,
+        p_now: new Date().toISOString(),
+      });
+    }
+    setDeviceCookie(res, deviceId!);
+    return sendJson(res, 200, { ok: true, trustedDevice: true });
   } catch (error) {
     console.error("verify-code failed", error instanceof Error ? error.message : "unknown");
     return sendJson(res, 503, { error: "Sign-in is temporarily unavailable." });
