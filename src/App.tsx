@@ -28,14 +28,20 @@ export default function App() {
 
   async function requestCode(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(cleanEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setEmail(cleanEmail);
     setBusy(true); setError(""); setMessage("");
     try {
-      const response = await fetch("/api/auth/send-code", {
+      const response = await fetch(new URL("/api/auth/send-code", window.location.origin), {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email })
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: JSON.stringify({ email: cleanEmail })
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Unable to request a code.");
       setStage("code");
       setMessage(data.message || "If the address is authorised, a code will be sent.");
@@ -48,12 +54,12 @@ export default function App() {
     event.preventDefault();
     setBusy(true); setError(""); setMessage("");
     try {
-      const response = await fetch("/api/auth/verify-code", {
+      const response = await fetch(new URL("/api/auth/verify-code", window.location.origin), {
         method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, code })
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), code })
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "The code could not be verified.");
       setAuthenticated(true);
       setCode("");
@@ -88,15 +94,15 @@ export default function App() {
         <section className="computer-card auth-card">
           <div className="auth-card-icon">{stage === "email" ? <Mail size={21} /> : <LockKeyhole size={21} />}</div>
           {stage === "email" ? (
-            <form onSubmit={requestCode}>
+            <form noValidate onSubmit={requestCode}>
               <label className="field-label" htmlFor="owner-email">Email address</label>
-              <input id="owner-email" className="auth-input" type="text" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} required value={email} onChange={e => setEmail(e.target.value.trim())} placeholder="you@example.com" />
+              <input id="owner-email" className="auth-input" type="text" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
               <button className="connect-button auth-submit" disabled={busy || !email.trim()} type="submit">{busy ? "Sending…" : "Continue"}</button>
             </form>
           ) : (
-            <form onSubmit={verifyCode}>
+            <form noValidate onSubmit={verifyCode}>
               <label className="field-label" htmlFor="verification-code">Verification code</label>
-              <input id="verification-code" className="auth-input code-input" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="000000" />
+              <input id="verification-code" className="auth-input code-input" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="000000" />
               <button className="connect-button auth-submit" disabled={busy || code.length !== 6} type="submit">{busy ? "Verifying…" : "Verify and sign in"}</button>
               <button className="text-button" type="button" onClick={() => { setStage("email"); setCode(""); setError(""); setMessage(""); }}><ArrowLeft size={14} /> Change email address</button>
             </form>
