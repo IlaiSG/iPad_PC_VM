@@ -1,4 +1,4 @@
-import { checkOrigin, createSession, dbRpc, hashCode, ownerEmail, sendJson, setSessionCookie, validEmail } from "../lib/auth";
+import { checkOrigin, createSession, dbRpc, hashCode, ownerEmail, sendJson, setSessionCookie, validEmail } from "../lib/auth.js";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Method not allowed" });
