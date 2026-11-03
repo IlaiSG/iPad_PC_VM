@@ -3,6 +3,17 @@ import { CircleHelp, Monitor, MousePointer2, Power, RefreshCw, ShieldCheck, Wifi
 
 type Stage = "email" | "code";
 
+function apiError(data: any, status: number, fallback: string): string {
+  const candidate = data?.error;
+  if (typeof candidate === "string" && candidate.trim()) return candidate;
+  if (candidate && typeof candidate === "object") {
+    if (typeof candidate.message === "string" && candidate.message.trim()) return candidate.message;
+    if (typeof candidate.error_description === "string" && candidate.error_description.trim()) return candidate.error_description;
+  }
+  if (typeof data?.message === "string" && data.message.trim()) return data.message;
+  return `${fallback} (HTTP ${status})`;
+}
+
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [stage, setStage] = useState<Stage>("email");
@@ -42,7 +53,7 @@ export default function App() {
         body: JSON.stringify({ email: cleanEmail })
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "Unable to request a code.");
+      if (!response.ok) throw new Error(apiError(data, response.status, "Unable to request a code."));
       setStage("code");
       setMessage(data.message || "If the address is authorised, a code will be sent.");
     } catch (err) {
@@ -60,7 +71,7 @@ export default function App() {
         body: JSON.stringify({ email: email.trim().toLowerCase(), code })
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || "The code could not be verified.");
+      if (!response.ok) throw new Error(apiError(data, response.status, "The code could not be verified."));
       setAuthenticated(true);
       setCode("");
     } catch (err) {
