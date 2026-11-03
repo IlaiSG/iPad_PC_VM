@@ -1,4 +1,5 @@
 import { useEffect, useState, FormEvent } from "react";
+import { startAuthentication, startRegistration } from "@simplewebauthn/browser";
 import { CircleHelp, Monitor, MousePointer2, Power, RefreshCw, ShieldCheck, Wifi, ArrowLeft, Mail, LockKeyhole, LogOut } from "lucide-react";
 
 type Stage = "email" | "code";
@@ -16,6 +17,8 @@ function apiError(data: any, status: number, fallback: string): string {
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [passkeySetup, setPasskeySetup] = useState(false);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
   const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -27,6 +30,7 @@ export default function App() {
     const lockWhenHidden = () => {
       if (document.visibilityState === "hidden") {
         setAuthenticated(false);
+        setPasskeySetup(false);
         setStage("email");
         setCode("");
         setMessage("");
@@ -73,18 +77,95 @@ export default function App() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(apiError(data, response.status, "The code could not be verified."));
       setAuthenticated(true);
+      setPasskeySetup(!data.hasPasskey);
       setCode("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally { setBusy(false); }
   }
 
+
+  async function signInWithPasskey() {
+    setPasskeyBusy(true); setError(""); setMessage("");
+    try {
+      const optionsResponse = await fetch("/api/auth/passkey/options", {
+        method: "POST",
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: "{}"
+      });
+      const options = await optionsResponse.json().catch(() => ({}));
+      if (!optionsResponse.ok) throw new Error(apiError(options, optionsResponse.status, "Passkey sign-in is unavailable."));
+      const credential = await startAuthentication({ optionsJSON: options });
+      const response = await fetch("/api/auth/passkey/authenticate", {
+        method: "POST",
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: JSON.stringify(credential)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(apiError(data, response.status, "Passkey sign-in failed."));
+      setAuthenticated(true);
+      setPasskeySetup(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Passkey sign-in was cancelled or failed.");
+    } finally { setPasskeyBusy(false); }
+  }
+
+  async function createPasskey() {
+    setPasskeyBusy(true); setError(""); setMessage("");
+    try {
+      const optionsResponse = await fetch("/api/auth/passkey/register-options", {
+        method: "POST",
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: "{}"
+      });
+      const options = await optionsResponse.json().catch(() => ({}));
+      if (!optionsResponse.ok) throw new Error(apiError(options, optionsResponse.status, "Passkey setup is unavailable."));
+      const credential = await startRegistration({ optionsJSON: options });
+      const response = await fetch("/api/auth/passkey/register", {
+        method: "POST",
+        headers: { "content-type": "application/json", "accept": "application/json" },
+        body: JSON.stringify(credential)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(apiError(data, response.status, "Passkey registration failed."));
+      setPasskeySetup(false);
+      setMessage("Passkey created. This device is now trusted.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Passkey registration was cancelled or failed.");
+    } finally { setPasskeyBusy(false); }
+  }
+
   async function signOut() {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } finally {
-      setAuthenticated(false); setStage("email"); setCode(""); setMessage(""); setError("");
+      setAuthenticated(false); setPasskeySetup(false); setStage("email"); setCode(""); setMessage(""); setError("");
     }
+  }
+
+
+  if (passkeySetup) {
+    return (
+      <main className="shell auth-shell">
+        <header className="topbar">
+          <a className="brand" href="/" aria-label="VMConnect home"><MousePointer2 className="brand-mark" size={25} strokeWidth={1.9} /><span>VMConnect</span></a>
+        </header>
+        <section className="welcome auth-welcome">
+          <p className="eyebrow">TRUST THIS DEVICE</p>
+          <h1>Make it<br /><em>yours.</em></h1>
+          <p className="intro">Your email is verified. Create a passkey on this device so you can sign in here securely next time.</p>
+        </section>
+        <section className="computer-card auth-card">
+          <div className="auth-card-icon"><ShieldCheck size={21} /></div>
+          <h2>Set up your passkey</h2>
+          <p className="card-note">Use Face ID, Touch ID, or your device passcode when your device offers it. Your passkey's private key stays with your authenticator.</p>
+          <button className="connect-button auth-submit" disabled={passkeyBusy} onClick={createPasskey} type="button">{passkeyBusy ? "Setting up…" : "Create passkey"}</button>
+          {error && <p className="form-error" role="alert">{error}</p>}
+        </section>
+        <p className="auth-footnote"><ShieldCheck size={14} /> New devices must verify by email before they can be trusted.</p>
+        <footer><span>VMConnect <span className="version">0.1.0 · Preview</span></span><span className="footer-mark">Your PC, wherever you are.</span></footer>
+      </main>
+    );
   }
 
   if (!authenticated) {
@@ -105,11 +186,14 @@ export default function App() {
         <section className="computer-card auth-card">
           <div className="auth-card-icon">{stage === "email" ? <Mail size={21} /> : <LockKeyhole size={21} />}</div>
           {stage === "email" ? (
+            <>
+            <button className="text-button" type="button" onClick={signInWithPasskey} disabled={passkeyBusy}>{passkeyBusy ? "Checking…" : "Sign in with a passkey"}</button>
             <form noValidate onSubmit={requestCode}>
               <label className="field-label" htmlFor="owner-email">Email address</label>
               <input id="owner-email" className="auth-input" type="text" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
-              <button className="connect-button auth-submit" disabled={busy || !email.trim()} type="submit">{busy ? "Sending…" : "Continue"}</button>
+              <button className="connect-button auth-submit" disabled={busy || !email.trim()} type="submit">{busy ? "Sending…" : "Continue with email"}</button>
             </form>
+            </>
           ) : (
             <form noValidate onSubmit={verifyCode}>
               <label className="field-label" htmlFor="verification-code">Verification code</label>
