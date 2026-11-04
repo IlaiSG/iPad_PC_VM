@@ -1,6 +1,6 @@
 import { useEffect, useState, FormEvent } from "react";
 import { startAuthentication, startRegistration } from "@simplewebauthn/browser";
-import { CircleHelp, Monitor, MousePointer2, Power, RefreshCw, ShieldCheck, Wifi, ArrowLeft, Mail, LockKeyhole, LogOut } from "lucide-react";
+import { CircleHelp, Monitor, Power, RefreshCw, ShieldCheck, Wifi, ArrowLeft, Mail, LockKeyhole, LogOut } from "lucide-react";
 
 type Stage = "email" | "code";
 

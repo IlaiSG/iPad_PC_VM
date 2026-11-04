@@ -8,13 +8,7 @@
   "theme_color": "#101510",
   "icons": [
     {
-      "src": "/apple-touch-icon.png?v=4",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/vmconnect-icon-v3.svg",
+      "src": "/vmconnect-logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"

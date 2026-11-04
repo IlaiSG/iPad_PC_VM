@@ -42,8 +42,7 @@ button, a { font: inherit; }
 .shell { width: min(100% - 40px, 620px); min-height: 100vh; margin: 0 auto; padding: max(25px, env(safe-area-inset-top)) 0 max(22px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; }
 .topbar { display: flex; align-items: center; justify-content: space-between; }
 .brand { display: inline-flex; gap: 11px; align-items: center; color: var(--text); text-decoration: none; font-family: Manrope, sans-serif; font-size: 17px; font-weight: 800; letter-spacing: -.7px; }
-.brand-mark { color: var(--text); flex: 0 0 auto; }
-.brand-mark path { stroke: currentColor; }
+.brand-mark { width: 32px; height: 32px; border-radius: 8px; object-fit: contain; flex: 0 0 auto; }
 .icon-button { border: 1px solid var(--line); color: var(--text); background: var(--surface); width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; }
 .welcome { margin: clamp(65px, 12vh, 105px) 0 34px; }
 .eyebrow { color: var(--accent); font-size: 10px; letter-spacing: 2.2px; font-weight: 700; margin: 0 0 17px; }
