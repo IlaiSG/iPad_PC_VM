@@ -4,20 +4,7 @@
   "description": "Connect to your Windows virtual machine from wherever you are.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#101510",
-  "theme_color": "#101510",
-  "icons": [
-    {
-      "src": "/apple-touch-icon.png?v=6",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/vmconnect-logo.svg?v=6",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
-  ]
+  "background_color": "#080908",
+  "theme_color": "#080908",
+  "icons": [{ "src": "/apple-touch-icon.png?v=7", "sizes": "180x180", "type": "image/png", "purpose": "any" }]
 }
