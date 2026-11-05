@@ -1,5 +1,5 @@
-const CACHE = "vmconnect-v7";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/apple-touch-icon.png"];
+const CACHE = "vmconnect-v8";
+const APP_SHELL = ["/", "/manifest.webmanifest", "/apple-touch-icon.png", "/icon.svg"];
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)));
   self.skipWaiting();
