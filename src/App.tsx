@@ -148,7 +148,7 @@ export default function App() {
     return (
       <main className="shell auth-shell">
         <header className="topbar">
-          <a className="brand" href="/" aria-label="VMConnect home"><img className="brand-mark" src="/apple-touch-icon.png?v=7" alt="" /><span>VMConnect</span></a>
+          <a className="brand" href="/" aria-label="VMConnect home"><img className="brand-mark" src="/apple-touch-icon.png?v=8" alt="" /><span>VMConnect</span></a>
         </header>
         <section className="welcome auth-welcome">
           <p className="eyebrow">TRUST THIS DEVICE</p>
@@ -173,7 +173,7 @@ export default function App() {
       <main className="shell auth-shell">
         <header className="topbar">
           <a className="brand" href="/" aria-label="VMConnect home">
-            <img className="brand-mark" src="/apple-touch-icon.png?v=7" alt="" />
+            <img className="brand-mark" src="/apple-touch-icon.png?v=8" alt="" />
             <span>VMConnect</span>
           </a>
           <button className="icon-button" aria-label="Help" title="Setup help"><CircleHelp size={19} /></button>
@@ -214,7 +214,7 @@ export default function App() {
   return (
     <main className="shell">
       <header className="topbar">
-        <a className="brand" href="/" aria-label="VMConnect home"><img className="brand-mark" src="/apple-touch-icon.png?v=7" alt="" /><span>VMConnect</span></a>
+        <a className="brand" href="/" aria-label="VMConnect home"><img className="brand-mark" src="/apple-touch-icon.png?v=8" alt="" /><span>VMConnect</span></a>
         <button className="icon-button" aria-label="Sign out" title="Sign out" onClick={signOut}><LogOut size={18} /></button>
       </header>
       <section className="welcome">
